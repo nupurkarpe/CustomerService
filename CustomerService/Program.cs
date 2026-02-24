@@ -25,7 +25,17 @@ builder.Services.AddHttpClient<UserServiceClient>(client =>
     client.BaseAddress = new Uri(builder.Configuration["AuthAddress"] ?? "https://loanauth-fxafbnechyf7e2dm.canadacentral-01.azurewebsites.net");
 });
 
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular",
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
 builder.Services.AddScoped<IDocTypeRepo, DocTypeRepo>();
