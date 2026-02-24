@@ -33,6 +33,7 @@ namespace CustomerService.Infrastructure.Repository
             }
             var data = mapper.Map<CustomerDetails>(dto);
             data.createdBy = dto.userId;
+            data.status = "Pending";
             await db.AddAsync(data);
             await db.SaveChangesAsync();
             return data;

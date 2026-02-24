@@ -15,6 +15,6 @@ namespace CustomerService.Application.DTO
         public string gender { get; set; }
         public string employmentType { get; set; }
         public decimal? monthlyIncome { get; set; }
-        public string status { get; set; }
+       
     }
 }
