@@ -25,6 +25,10 @@ builder.Services.AddHttpClient<UserServiceClient>(client =>
     client.BaseAddress = new Uri(builder.Configuration["AuthAddress"] ?? "https://loanauth-fxafbnechyf7e2dm.canadacentral-01.azurewebsites.net");
 });
 
+builder.Services.AddAutoMapper(typeof(MapperConfig));
+builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
+builder.Services.AddScoped<IDocTypeRepo, DocTypeRepo>();
+builder.Services.AddScoped<IKycRepo, KycRepo>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
@@ -36,10 +40,6 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod();
         });
 });
-builder.Services.AddAutoMapper(typeof(MapperConfig));
-builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
-builder.Services.AddScoped<IDocTypeRepo, DocTypeRepo>();
-builder.Services.AddScoped<IKycRepo, KycRepo>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -47,6 +47,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseRouting();
+app.UseCors("AllowAngular");
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
