@@ -22,7 +22,7 @@ builder.Logging.AddConsole();
 
 builder.Services.AddHttpClient<UserServiceClient>(client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["AuthAddress"] ?? "loanauth-fxafbnechyf7e2dm.canadacentral-01.azurewebsites.net");
+    client.BaseAddress = new Uri(builder.Configuration["AuthAddress"] ?? "https://loanauth-fxafbnechyf7e2dm.canadacentral-01.azurewebsites.net");
 });
 
 
