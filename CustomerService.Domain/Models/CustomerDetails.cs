@@ -25,6 +25,6 @@ namespace CustomerService.Domain.Models
         public int? modifiedBy { get; set; }
         public DateTime? deletedAt { get; set; }
         public int? deletedBy { get; set; }
-        public Kyc kyc { get; set; }
+        public List<Kyc> kyc { get; set; }
     }
 }
