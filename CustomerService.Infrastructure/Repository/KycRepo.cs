@@ -44,12 +44,11 @@ namespace CustomerService.Infrastructure.Repository
             await dto.file.CopyToAsync(stream);
             stream.Close();
             var path = $"/Uploads/KYC/{fileName}";
-
             var kyc = mapper.Map<Kyc>(dto);
             kyc.filePath = path;
             kyc.verificationStatus = "Pending";
             kyc.createdAt = DateTime.UtcNow;
-
+            kyc.docRefNo= Guid.NewGuid().ToString();
             await db.kyc.AddAsync(kyc);
             await db.SaveChangesAsync();
             return kyc;
