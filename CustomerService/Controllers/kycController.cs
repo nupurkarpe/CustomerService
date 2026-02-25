@@ -57,9 +57,9 @@ namespace CustomerService.Controllers
         }
 
         [HttpGet("customer/{customerId}")]
-        public async Task<IActionResult> FetchKycByCustomerId(int kycId)
+        public async Task<IActionResult> FetchKycByCustomerId(int customerId)
         {
-            var res = await repo.GetKycByCustomerId(kycId);
+            var res = await repo.GetKycByCustomerId(customerId);
             return Ok(ApiResponse.Success("Kyc details fetched successfully", res));
         }
     }
