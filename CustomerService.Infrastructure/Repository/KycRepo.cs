@@ -77,6 +77,17 @@ namespace CustomerService.Infrastructure.Repository
             return res;
         }
 
+        public async Task<List<KycResponseDTO>> GetKycByCustomerId(int customerId)
+        {
+            var kyc = await db.kyc.Include(x => x.docType).Where(x => x.customerId == customerId).ToListAsync();
+            if(kyc == null)
+            {
+                throw new KeyNotFoundException("Kyc details not found for the customer");
+            }
+            var res = mapper.Map<List<KycResponseDTO>>(kyc);
+            return res;
+        }
+
         public async Task<bool> KycExists(int kycId)
         {
             return await db.kyc.AnyAsync(x => x.kycId == kycId);

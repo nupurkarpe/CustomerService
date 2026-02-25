@@ -16,5 +16,6 @@ namespace CustomerService.Application.Interface
         Task<bool> DocTypeExists(int docTypeId);
         Task<KycResponseDTO> DeleteKyc(int kycId);
         Task<PagedResult<KycResponseDTO>> FetchAllKyc(int page, int pageSize, string? search);
+        Task<List<KycResponseDTO>> GetKycByCustomerId(int customerId);
     }
 }
