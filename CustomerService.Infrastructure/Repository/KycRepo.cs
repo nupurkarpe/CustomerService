@@ -79,7 +79,7 @@ namespace CustomerService.Infrastructure.Repository
 
         public async Task<List<KycResponseDTO>> GetKycByCustomerId(int customerId)
         {
-            var kyc = await db.kyc.Include(x => x.docType).Where(x => x.customerId == customerId).ToListAsync();
+            var kyc = await db.kyc.Include(x => x.docType).Where(x => x.customerId == customerId && x.deletedAt == null).ToListAsync();
             if(kyc == null)
             {
                 throw new KeyNotFoundException("Kyc details not found for the customer");
