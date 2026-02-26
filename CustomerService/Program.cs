@@ -42,12 +42,7 @@ builder.Services.AddCors(options =>
         });
 });
 var app = builder.Build();
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
-    RequestPath = "/Uploads"
-});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
