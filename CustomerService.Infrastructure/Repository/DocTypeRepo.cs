@@ -94,12 +94,9 @@ namespace CustomerService.Infrastructure.Repository
 
             if (!string.IsNullOrEmpty(typeName))
             {
-                var search = typeName.Trim().ToLower();
+                var name  = typeName.Trim().ToLower();
+                docT = docT.Where(o => o.typeName.ToLower() == name);
 
-                docT = docT.Where(o =>
-               o.typeName != null &&
-               o.typeName.ToLower().Contains(typeName)
-           );
             }
             var totalItems = await docT.CountAsync();
 

@@ -115,7 +115,7 @@ namespace CustomerService.Infrastructure.Repository
                 name = name.ToLower();
 
                 var userIds = users
-                    .Where(o => EF.Functions.Like(o.name, $"%{name}%"))
+                    .Where(o => o.name==name)
                     .Select(u => u.userId)
                     .ToList();
 
