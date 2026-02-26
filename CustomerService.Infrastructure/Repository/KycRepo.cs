@@ -56,12 +56,12 @@ namespace CustomerService.Infrastructure.Repository
 
         public async Task<bool> CustomerExists(int customerId)
         {
-            return await db.customerDetails.AnyAsync(x => x.customerId == customerId);
+            return await db.customerDetails.AnyAsync(x => x.customerId == customerId && x.deletedAt == null);
         }
 
         public async Task<bool> DocTypeExists(int docTypeId)
         {
-            return await db.docType.AnyAsync(x => x.docTypeId == docTypeId);
+            return await db.docType.AnyAsync(x => x.docTypeId == docTypeId && x.deletedAt == null);
         }
 
 
@@ -90,7 +90,7 @@ namespace CustomerService.Infrastructure.Repository
 
         public async Task<bool> KycExists(int kycId)
         {
-            return await db.kyc.AnyAsync(x => x.kycId == kycId);
+            return await db.kyc.AnyAsync(x => x.kycId == kycId && x.deletedAt == null);
         }
 
         public async Task<KycResponseDTO> UpdateKyc(int kycId, KycUpdateDTO dto)
@@ -99,7 +99,7 @@ namespace CustomerService.Infrastructure.Repository
             {
                 throw new KeyNotFoundException("Kyc details not found");
             }
-            var kyc = await db.kyc.Include(x => x.docType).FirstOrDefaultAsync(x => x.kycId == kycId);
+            var kyc = await db.kyc.Include(x => x.docType).FirstOrDefaultAsync(x => x.kycId == kycId && x.deletedAt == null);
            mapper.Map(dto, kyc);
             if (dto.customerId.HasValue)
             {
@@ -162,7 +162,7 @@ namespace CustomerService.Infrastructure.Repository
             {
                 throw new KeyNotFoundException("Kyc details not found");
             }
-            var kyc = await db.kyc.Include(x => x.docType).FirstOrDefaultAsync(x => x.kycId == kycId);
+            var kyc = await db.kyc.Include(x => x.docType).FirstOrDefaultAsync(x => x.kycId == kycId && x.deletedAt==null);
             kyc.deletedAt = DateTime.UtcNow;
             await db.SaveChangesAsync();
             return mapper.Map<KycResponseDTO>(kyc);
@@ -181,7 +181,7 @@ namespace CustomerService.Infrastructure.Repository
             }
             var totalItems = await kyc.CountAsync();
 
-            var k = await kyc.OrderByDescending(o => o.createdAt).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var k = await kyc.Include(x => x.docType).OrderByDescending(o => o.createdAt).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 
             var result = new PagedResult<KycResponseDTO>
             {

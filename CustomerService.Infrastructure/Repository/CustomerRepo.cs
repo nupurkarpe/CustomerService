@@ -7,6 +7,7 @@ using CustomerService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using System.Text;
 
 namespace CustomerService.Infrastructure.Repository
@@ -41,7 +42,7 @@ namespace CustomerService.Infrastructure.Repository
 
         public async Task<CustomerResponseDTO> FetchCustomerById(int customerId)
         {
-            var cus = await db.customerDetails.FirstOrDefaultAsync(c => c.customerId == customerId);
+            var cus = await db.customerDetails.FirstOrDefaultAsync(c => c.customerId == customerId && c.deletedAt == null);
             if (cus == null)
                 throw new KeyNotFoundException("Customer not found");
             
@@ -64,7 +65,7 @@ namespace CustomerService.Infrastructure.Repository
 
         public async Task<CustomerResponseDTO> UpdateCustomer(int customerID, CustomerUpdateDTO dto)
         {
-            var cus = await db.customerDetails.FirstOrDefaultAsync(c => c.customerId == customerID);
+            var cus = await db.customerDetails.FirstOrDefaultAsync(c => c.customerId == customerID && c.deletedAt == null);
             if (cus == null)
                 throw new KeyNotFoundException("Customer not found");
             var data = mapper.Map(dto, cus);
@@ -83,7 +84,7 @@ namespace CustomerService.Infrastructure.Repository
 
         public async Task<CustomerResponseDTO> DeleteCustomer(int customerID)
         {          
-            var cus = await db.customerDetails.FirstOrDefaultAsync(c => c.customerId == customerID);
+            var cus = await db.customerDetails.FirstOrDefaultAsync(c => c.customerId == customerID && c.deletedAt == null);
             if (cus == null)
                 throw new KeyNotFoundException("Customer not found");
             cus.deletedBy = customerID;
@@ -108,19 +109,17 @@ namespace CustomerService.Infrastructure.Repository
             var cus = db.customerDetails.Where(o => o.deletedAt == null).AsQueryable();
             var users = await client.GetAllUser();
 
-            // ✅ Filter by Name (LIKE FetchAllDocType)
+           
             if (!string.IsNullOrEmpty(name))
             {
                 name = name.ToLower();
 
                 var userIds = users
-                    .Where(u => u.name != null &&
-                                u.name.ToLower().Contains(name))
+                    .Where(o => EF.Functions.Like(o.name, $"%{name}%"))
                     .Select(u => u.userId)
                     .ToList();
 
-                cus = cus
-                    .Where(c => userIds.Contains(c.userId));
+                cus = cus.Where(c => userIds.Contains(c.userId));
             }
             var totalItems = await cus.CountAsync();
 

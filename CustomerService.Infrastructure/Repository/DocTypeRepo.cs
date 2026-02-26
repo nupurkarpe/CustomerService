@@ -22,7 +22,7 @@ namespace CustomerService.Infrastructure.Repository
 
         public async Task<bool> DocTypeNameExists(string typeName)
         {
-            return await db.docType.AnyAsync(c => c.typeName.ToLower() == typeName.ToLower());
+            return await db.docType.AnyAsync(c => c.typeName.ToLower() == typeName.ToLower() && c.deletedAt == null);
         }
         public async Task<DocType> AddDocType(DocTypeAddDTO dto)
         {
@@ -38,7 +38,7 @@ namespace CustomerService.Infrastructure.Repository
 
         public async Task<bool> DocTypeExists(int docTypeId)
         {
-            return await db.docType.AnyAsync(x => x.docTypeId == docTypeId);
+            return await db.docType.AnyAsync(x => x.docTypeId == docTypeId && x.deletedAt == null);
         }
 
         public async Task<DocTypeResponseDTO> FetchDocTypeById(int docTypeId)
@@ -47,7 +47,7 @@ namespace CustomerService.Infrastructure.Repository
             {
                 throw new KeyNotFoundException("Doc Type not found");
             }
-            var doc = await db.docType.FirstOrDefaultAsync(d => d.docTypeId == docTypeId);
+            var doc = await db.docType.FirstOrDefaultAsync(d => d.docTypeId == docTypeId && d.deletedAt == null);
             var res = mapper.Map<DocTypeResponseDTO>(doc);
             return res;
         }
@@ -65,7 +65,7 @@ namespace CustomerService.Infrastructure.Repository
                     throw new InvalidOperationException("Doc Type already exists");
                 }
             }
-            var doc = await db.docType.FirstOrDefaultAsync(c => c.docTypeId == docTypeId);
+            var doc = await db.docType.FirstOrDefaultAsync(c => c.docTypeId == docTypeId && c.deletedAt == null);
             var data = mapper.Map(dto, doc);
             data.modifiedAt = DateTime.UtcNow;
             await db.SaveChangesAsync();
@@ -78,7 +78,7 @@ namespace CustomerService.Infrastructure.Repository
             {
                 throw new KeyNotFoundException("Doc Type not found");
             }
-            var doc = await db.docType.FirstOrDefaultAsync(c => c.docTypeId == docTypeId);
+            var doc = await db.docType.FirstOrDefaultAsync(c => c.docTypeId == docTypeId && c.deletedAt == null);
             doc.deletedAt = DateTime.UtcNow;
             await db.SaveChangesAsync();
             return mapper.Map<DocTypeResponseDTO>(doc);
@@ -95,7 +95,7 @@ namespace CustomerService.Infrastructure.Repository
             if (!string.IsNullOrEmpty(typeName))
             {
                 typeName = typeName.ToLower();
-                docT = docT.Where(o => o.typeName.ToLower() == typeName);
+                docT = docT.Where(o =>EF.Functions.Like(o.typeName, $"%{typeName}%"));
             }
             var totalItems = await docT.CountAsync();
 
