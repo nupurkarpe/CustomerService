@@ -94,8 +94,13 @@ namespace CustomerService.Infrastructure.Repository
 
             if (!string.IsNullOrEmpty(typeName))
             {
-                typeName = typeName.ToLower();
-                docT = docT.Where(o =>EF.Functions.Like(o.typeName, $"%{typeName}%"));
+                var search = typeName.Trim().ToLower();
+
+                docT = docT.Where(o =>
+                    EF.Functions.Like(
+                        o.typeName.ToLower(),
+                        $"%{search}%"
+                    ));
             }
             var totalItems = await docT.CountAsync();
 
