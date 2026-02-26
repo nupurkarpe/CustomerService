@@ -106,11 +106,26 @@ namespace CustomerService.Infrastructure.Repository
             if (pageSize > 100) pageSize = 100;
 
             var cus = db.customerDetails.Where(o => o.deletedAt == null).AsQueryable();
-            
+            var users = await client.GetAllUser();
+
+            // ✅ Filter by Name (LIKE FetchAllDocType)
+            if (!string.IsNullOrEmpty(name))
+            {
+                name = name.ToLower();
+
+                var userIds = users
+                    .Where(u => u.name != null &&
+                                u.name.ToLower().Contains(name))
+                    .Select(u => u.userId)
+                    .ToList();
+
+                cus = cus
+                    .Where(c => userIds.Contains(c.userId));
+            }
             var totalItems = await cus.CountAsync();
 
             var cust = await cus.OrderByDescending(o => o.createdAt).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            var users = await client.GetAllUser();
+         
 
             var responseList = cust.Select(c =>
             {
@@ -124,12 +139,7 @@ namespace CustomerService.Infrastructure.Repository
                 return response;
             }).ToList();
 
-            if (!string.IsNullOrEmpty(name))
-            {
-                name = name.ToLower();
-                responseList = responseList.Where(x => x.name != null &&x.name.ToLower().Contains(name)).ToList();
-                totalItems = responseList.Count;
-            }
+           
             var result = new PagedResult<CustomerResponseDTO>
             {
                 Items = responseList,

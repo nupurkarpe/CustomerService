@@ -100,7 +100,7 @@ namespace CustomerService.Infrastructure.Repository
                 throw new KeyNotFoundException("Kyc details not found");
             }
             var kyc = await db.kyc.Include(x => x.docType).FirstOrDefaultAsync(x => x.kycId == kycId);
-            var data = mapper.Map(dto, kyc);
+           mapper.Map(dto, kyc);
             if (dto.customerId.HasValue)
             {
                 if (!await CustomerExists(dto.customerId.Value))
@@ -145,6 +145,10 @@ namespace CustomerService.Infrastructure.Repository
                 await dto.file.CopyToAsync(stream);
                 stream.Close();
                 kyc.filePath = $"/Uploads/KYC/{fileName}";
+            }
+            if (dto.verificationStatus != null)
+            {
+                kyc.verificationStatus = dto.verificationStatus;
             }
 
             kyc.modifiedAt = DateTime.UtcNow;
