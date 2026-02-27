@@ -32,6 +32,11 @@ namespace CustomerService.Infrastructure.Repository
             {
                 throw new KeyNotFoundException("User Not Found");
             }
+            var customerExists = await db.customerDetails.AnyAsync(c => c.createdBy == dto.userId);
+            if (customerExists)
+            {
+                throw new InvalidOperationException("Customer already exists for this user ID.");
+            }
             var data = mapper.Map<CustomerDetails>(dto);
             data.createdBy = dto.userId;
             data.status = "Pending";
