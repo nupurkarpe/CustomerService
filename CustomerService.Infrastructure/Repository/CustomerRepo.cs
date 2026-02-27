@@ -113,9 +113,8 @@ namespace CustomerService.Infrastructure.Repository
             if (!string.IsNullOrEmpty(name))
             {
                 name = name.ToLower();
-
                 var userIds = users
-                    .Where(o => o.name==name)
+                    .Where(o => o.name.ToLower().Contains(name))
                     .Select(u => u.userId)
                     .ToList();
 
