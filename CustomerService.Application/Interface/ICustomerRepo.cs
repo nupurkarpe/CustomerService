@@ -9,7 +9,7 @@ namespace CustomerService.Application.Interface
     public interface ICustomerRepo
     {
         Task<CustomerDetails> AddCustomer(CustomerAddDTO dto);
-        //Task<bool> UserExists(int userId);
+        Task<CustomerResponseDTO> CustExists(int userId);
         Task<bool> CustomerExists(int customerId);
         Task<CustomerResponseDTO> FetchCustomerById(int customerId);
 

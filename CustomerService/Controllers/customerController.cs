@@ -53,5 +53,12 @@ namespace CustomerService.Controllers
             }
             return Ok(ApiResponse.Success("Customers fetched successfully", res));
         }
+
+        [HttpGet("/user/{userId}")]
+        public async Task<IActionResult> cusExists(int userId)
+        {
+            var res = await repo.CustExists(userId);            
+            return Ok(ApiResponse.Success("You have already filled the form", res));
+        }
     }
 }

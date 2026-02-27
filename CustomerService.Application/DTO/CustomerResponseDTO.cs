@@ -21,5 +21,7 @@ namespace CustomerService.Application.DTO
         public string status { get; set; }
         public DateTime createdAt { get; set; }
 
+
+
     }
 }
