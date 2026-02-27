@@ -45,9 +45,9 @@ namespace CustomerService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FetchAllDocType(int page = 1, int pageSize = 10, string? verificationStatus = null)
+        public async Task<IActionResult> FetchAllDocType(int page = 1, int pageSize = 10, string? typeName = null)
         {
-            var res = await repo.FetchAllDocType(page, pageSize, verificationStatus);
+            var res = await repo.FetchAllDocType(page, pageSize, typeName);
             if (res.Items.Count == 0)
             {
                 return Ok(ApiResponse.Success("No Doc type found ", res));
