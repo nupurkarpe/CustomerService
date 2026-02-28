@@ -127,13 +127,20 @@ namespace CustomerService.Infrastructure.Repository
 
             if (dto.file != null && dto.file.Length > 0)
             {
-
+                if (dto.file.Length > 250 * 1024)
+                {
+                    throw new InvalidOperationException("File size should not exceed 250 KB");
+                }
                 var extension = Path.GetExtension(dto.file.FileName).ToLower();
                 if (extension != ".pdf")
                 {
                     throw new InvalidOperationException("Please upload only pdf file");
                 }
-                   
+                var existingDocument = await db.kyc.FirstOrDefaultAsync(x =>x.customerId == dto.customerId &&x.docTypeId == dto.docTypeId &&!string.IsNullOrEmpty(x.filePath));
+                if (existingDocument != null)
+                {
+                    throw new InvalidOperationException("Document already submitted for this type");
+                }
 
                 var folder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "KYC");
                 Directory.CreateDirectory(folder);

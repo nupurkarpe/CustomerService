@@ -46,7 +46,8 @@ namespace CustomerService.Infrastructure.Repository
         }
         public async Task<CustomerResponseDTO>CustExists(int userId)
         {
-            var customerExists = await db.customerDetails.FirstOrDefaultAsync(c => c.createdBy == userId);    
+            var customerExists = await db.customerDetails.FirstOrDefaultAsync(c => c.createdBy == userId);
+
             return mapper.Map<CustomerResponseDTO>(customerExists);
         }
         public async Task<CustomerResponseDTO> FetchCustomerById(int customerId)
